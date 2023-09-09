@@ -1,0 +1,6 @@
+train: D:\D\My github projects\Ball-detection-with-Yolov8\Training the model\train
+val: D:\D\My github projects\Ball-detection-with-Yolov8\Training the model\val
+
+nc: 2
+
+names: ["orange_ping_pong_ball", "moving_orange_ping_pong_ball"]
