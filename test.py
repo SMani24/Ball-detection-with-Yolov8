@@ -21,11 +21,11 @@ def main():
     frameWidth, frameHeight = args.webcam_resolution
     print(frameWidth, frameHeight)
 
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(2)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, frameWidth)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, frameHeight)
 
-    model = YOLO("yolov8n.pt")
+    model = YOLO("./yolov8_ping_pong.pt")
 
     boxAnnotator = sv.BoxAnnotator(
         thickness=2,
@@ -46,7 +46,7 @@ def main():
         fps, prevTime = calculateFPS(prevTime)
 
         # Draw FPS on the frame
-        # cv2.putText(frame, f"FPS: {int(fps)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+        cv2.putText(frame, f"FPS: {int(fps)}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
         cv2.imshow("YOLOv8", frame)
 
