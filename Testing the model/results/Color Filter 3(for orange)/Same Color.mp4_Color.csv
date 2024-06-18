@@ -1,0 +1,4 @@
+,Ball in frame,Ball not in frame,Avg Time
+Detected,79(50),0,
+Not Detected,20(20),57,
+Avg Time,,,0.020275954

@@ -72,10 +72,13 @@ def plot_bboxes(image, boxes, labels=[], colors=[], score=True, conf=None):
   else :
     cv2.imshow("Detected", image) #if used in Python
 def main():
+    hueLow, satLow, valLow = [0, 19, 66]
+    hueHigh, satHigh, valHigh = [179, 255, 255]
     model = YOLO("./yolov8_ping_pong.pt")
-    cnt = 0
+    
     avgTime = 0
     for vidPath in os.listdir("./Video"): # Get all directories in "Video" folder
+        cnt = 0
         avgTime = 0
         results = pd.DataFrame(index=["Detected", "Not Detected", "Avg Time"], columns=["Ball in frame", "Ball not in frame", "Avg Time"]) 
         results["Ball in frame"]["Detected"] = 0
@@ -94,7 +97,14 @@ def main():
             )
         frameCnt = -1
         result = model(frame, verbose=False, conf=0.5)
-        while success:     
+        while success:
+            t1 = time.time()
+            frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+            lowerBound = np.array([hueLow, satLow, valLow])
+            upperBound = np.array([hueHigh, satHigh, valHigh])
+            myMask = cv2.inRange(frameHSV, lowerBound, upperBound)
+            myObject = cv2.bitwise_and(frame, frame, mask=myMask)
+            frame = myObject     
             frameCnt += 1
             # Converting to 24FPS
             # if frameCnt % 2 == 0 or frameCnt % 9 == 0:
@@ -107,7 +117,7 @@ def main():
             # formatedFrame = cv2.bitwise_and(frame, frame, mask=ballMask)
             # frame = formatedFrame
 
-            t1 = time.time()
+            
             
 
             # cv2.imshow("Detected", frame)
@@ -115,7 +125,6 @@ def main():
             result = model(frame, verbose=False, conf=0.5)
             result = result[0]
             
-            cnt += 1
 
             detections = sv.Detections.from_yolov8(result)
             
@@ -131,6 +140,7 @@ def main():
             print(dt)
             avgTime += dt
             print("avgTime: ", avgTime)
+            cnt += 1
             # # cv2.imshow("Og frame", frame)
             cv2.imshow("Detected", detectedFrame)
 
@@ -165,7 +175,7 @@ def main():
                 break
             success, frame = video.read()
         results["Avg Time"]["Avg Time"] = avgTime / cnt
-        results.to_csv(vidPath + ".csv")
+        results.to_csv(vidPath + "_Color.csv")
     print("Final Average:", avgTime / cnt)
     
 
